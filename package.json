@@ -1,0 +1,33 @@
+{
+  "name": "dday-calculator",
+  "version": "1.0.0",
+  "private": true,
+  "description": "디데이메이트 - D-Day 계산기",
+  "scripts": {
+    "dev": "granite dev",
+    "start": "react-native start",
+    "build": "granite build",
+    "test": "jest --passWithNoTests",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@apps-in-toss/framework": "1.5.2",
+    "@fastify/merge-json-schemas": "^0.2.1",
+    "@granite-js/native": "0.1.21",
+    "@granite-js/plugin-router": "0.1.21",
+    "@granite-js/react-native": "0.1.21",
+    "@toss/tds-react-native": "1.3.8",
+    "react": "18.2.0",
+    "react-native": "0.72.6"
+  },
+  "devDependencies": {
+    "@babel/core": "7.23.9",
+    "@babel/runtime": "7.18.9",
+    "@granite-js/plugin-hermes": "0.1.21",
+    "@granite-js/plugin-router": "0.1.21",
+    "@types/react": "18.3.3",
+    "babel-preset-granite": "0.1.21",
+    "typescript": "^5.7.2"
+  }
+}
