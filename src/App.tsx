@@ -169,24 +169,49 @@ function App() {
     showToast('저축 현황이 업데이트되었습니다');
   }, [updateItem, items, showToast]);
 
+  // Clipboard fallback for Toss webview
+  const copyToClipboard = useCallback((text: string): Promise<void> => {
+    if (navigator.clipboard) {
+      return navigator.clipboard.writeText(text);
+    }
+    // Fallback: textarea + execCommand for webview environments
+    return new Promise((resolve, reject) => {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.left = '-9999px';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.focus();
+      textarea.select();
+      try {
+        const success = document.execCommand('copy');
+        document.body.removeChild(textarea);
+        success ? resolve() : reject(new Error('execCommand failed'));
+      } catch (err) {
+        document.body.removeChild(textarea);
+        reject(err);
+      }
+    });
+  }, []);
+
   // AD handlers for premium features
   const handleExportCard = useCallback((item: DdayItem) => {
     showInterstitialAd({
       onDismiss: () => {
         const dday = calculateDday(item.targetDate);
         const text = `${item.title}\n${formatDday(dday)}\n${formatDateKorean(item.targetDate)}\n\n하루모아`;
-        if (!navigator.clipboard) {
-          showToast('클립보드 기능을 사용할 수 없습니다');
-          return;
-        }
-        navigator.clipboard.writeText(text).then(() => {
+        copyToClipboard(text).then(() => {
           showToast('D-Day 정보가 복사되었습니다');
         }).catch(() => {
           showToast('복사에 실패했습니다');
         });
       },
+      onUnavailable: () => {
+        showToast('광고를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.');
+      },
     });
-  }, [showInterstitialAd, showToast]);
+  }, [showInterstitialAd, showToast, copyToClipboard]);
 
   const handleUnlockAnalytics = useCallback(() => {
     showInterstitialAd({
@@ -194,6 +219,9 @@ function App() {
         setAnalyticsUnlocked(true);
         setUnlockedToday(UNLOCK_KEYS.analytics);
         showToast('상세 분석이 잠금 해제되었습니다');
+      },
+      onUnavailable: () => {
+        showToast('광고를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.');
       },
     });
   }, [showInterstitialAd, showToast]);
@@ -204,6 +232,9 @@ function App() {
         setEncouragementUnlocked(true);
         setUnlockedToday(UNLOCK_KEYS.encouragement);
         showToast('오늘의 응원이 공개되었습니다');
+      },
+      onUnavailable: () => {
+        showToast('광고를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.');
       },
     });
   }, [showInterstitialAd, showToast]);

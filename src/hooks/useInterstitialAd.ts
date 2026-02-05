@@ -5,6 +5,7 @@ const TEST_AD_GROUP_ID = 'ait-ad-test-interstitial-id';
 
 interface InterstitialAdCallback {
   onDismiss?: () => void;
+  onUnavailable?: () => void;
 }
 
 export function useInterstitialAd(adGroupId: string = TEST_AD_GROUP_ID) {
@@ -47,7 +48,7 @@ export function useInterstitialAd(adGroupId: string = TEST_AD_GROUP_ID) {
     return cleanup;
   }, [adGroupId]);
 
-  const showInterstitialAd = useCallback(({ onDismiss }: InterstitialAdCallback) => {
+  const showInterstitialAd = useCallback(({ onDismiss, onUnavailable }: InterstitialAdCallback) => {
     let isAdUnsupported = false;
     try {
       isAdUnsupported = GoogleAdMob?.showAppsInTossAdMob?.isSupported?.() === false;
@@ -56,14 +57,14 @@ export function useInterstitialAd(adGroupId: string = TEST_AD_GROUP_ID) {
     }
 
     if (!adSupported || isAdUnsupported) {
-      console.warn('광고가 지원되지 않는 환경입니다. 바로 실행합니다.');
-      onDismiss?.();
+      console.warn('광고가 지원되지 않는 환경입니다.');
+      onUnavailable?.();
       return;
     }
 
     if (loading) {
-      console.warn('광고가 아직 로드되지 않았습니다. 바로 실행합니다.');
-      onDismiss?.();
+      console.warn('광고가 아직 로드되지 않았습니다.');
+      onUnavailable?.();
       return;
     }
 
