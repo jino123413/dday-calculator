@@ -59,7 +59,7 @@ function App() {
     calculateStats,
   } = useDdayState();
 
-  const { showInterstitialAd } = useInterstitialAd();
+  const { showInterstitialAd } = useInterstitialAd('ait.v2.live.ab9957300f7d4f4a');
 
   // Add form state
   const [newTitle, setNewTitle] = useState('');
