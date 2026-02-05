@@ -799,6 +799,11 @@ body {
   gap: 6px;
 }
 
+.analytics-subtitle i {
+  font-size: 16px;
+  color: var(--primary-color);
+}
+
 .analytics-category {
   margin-top: 20px;
 }
@@ -873,6 +878,68 @@ body {
   color: var(--primary-color);
 }
 
+/* Insight Preview (Free) */
+.analytics-insight-preview {
+  margin-top: 20px;
+}
+
+.insight-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--background);
+  padding: 14px;
+  border-radius: 10px;
+  margin-bottom: 8px;
+}
+
+.insight-card > i {
+  font-size: 22px;
+  color: var(--primary-color);
+  flex-shrink: 0;
+}
+
+.insight-card-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.insight-label {
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+.insight-value {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.insight-more-hint {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  text-align: center;
+  margin-top: 4px;
+}
+
+.insight-more-hint i {
+  font-size: 11px;
+}
+
+/* Insights Full (Locked) */
+.analytics-insights-full {
+  margin-bottom: 24px;
+}
+
+.insights-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 /* Locked / Blurred */
 .analytics-locked {
   padding-top: 20px;
@@ -891,12 +958,256 @@ body {
 }
 
 .analytics-label {
-  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--text-secondary);
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
+.analytics-label i {
+  font-size: 16px;
+}
+
+/* D-Day Timeline (Vertical) */
+.analytics-timeline {
+  margin-bottom: 24px;
+}
+
+.timeline-vertical {
+  display: flex;
+  flex-direction: column;
+}
+
+.timeline-row {
+  display: flex;
+  align-items: flex-start;
+  min-height: 56px;
+}
+
+.timeline-left {
+  width: 60px;
+  flex-shrink: 0;
+  text-align: right;
+  padding-right: 12px;
+  padding-top: 2px;
+}
+
+.timeline-dday-text {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+.timeline-row.past .timeline-dday-text {
+  color: var(--text-tertiary);
+}
+
+.timeline-row.today .timeline-dday-text {
+  color: var(--danger);
+}
+
+.timeline-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 20px;
+  flex-shrink: 0;
+}
+
+.timeline-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--primary-color);
+  border: 2px solid var(--surface);
+  box-shadow: 0 0 0 2px var(--primary-light);
+  flex-shrink: 0;
+  z-index: 1;
+}
+
+.timeline-dot.past {
+  background: var(--text-tertiary);
+  box-shadow: 0 0 0 2px var(--border);
+}
+
+.timeline-dot.today {
+  background: var(--danger);
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+}
+
+.timeline-line {
+  width: 2px;
+  flex: 1;
+  min-height: 32px;
+  background: var(--border);
+}
+
+.timeline-right {
+  flex: 1;
+  padding-left: 12px;
+  padding-bottom: 16px;
+  min-width: 0;
+}
+
+.timeline-item-title {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.timeline-row.past .timeline-item-title {
+  color: var(--text-tertiary);
+}
+
+.timeline-item-date {
+  display: block;
+  font-size: 12px;
+  color: var(--text-tertiary);
+  margin-top: 2px;
+}
+
+/* Monthly Distribution Bar Chart */
+.analytics-monthly {
+  margin-bottom: 24px;
+}
+
+.monthly-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  background: var(--background);
+  padding: 16px 8px 12px;
+  border-radius: 12px;
+  height: 160px;
+}
+
+.monthly-bar-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  height: 100%;
+}
+
+.monthly-bar-area {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.monthly-bar {
+  width: 100%;
+  max-width: 20px;
+  background: var(--primary-light);
+  border-radius: 4px 4px 0 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 4px;
+  transition: height 0.3s ease;
+}
+
+.monthly-bar.current {
+  background: var(--primary-color);
+}
+
+.monthly-bar-count {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--primary-dark);
+}
+
+.monthly-bar.current .monthly-bar-count {
+  color: white;
+}
+
+.monthly-bar-label {
+  font-size: 10px;
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+}
+
+.monthly-bar-label.current {
+  color: var(--primary-color);
+  font-weight: 700;
+}
+
+/* Savings Aggregation */
+.analytics-savings {
+  margin-bottom: 24px;
+}
+
+.savings-agg-card {
+  display: flex;
+  gap: 20px;
+  background: var(--background);
+  padding: 20px;
+  border-radius: 12px;
+}
+
+.savings-ring-wrap {
+  position: relative;
+  width: 88px;
+  height: 88px;
+  flex-shrink: 0;
+}
+
+.savings-ring-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+.savings-agg-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  justify-content: center;
+  min-width: 0;
+}
+
+.savings-agg-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.savings-agg-label {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.savings-agg-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.savings-agg-value.success {
+  color: var(--success);
+}
+
+.savings-agg-value.muted {
+  color: var(--text-tertiary);
+}
+
+/* Past D-Day Analysis */
 .analytics-past {
   margin-bottom: 16px;
 }
@@ -912,19 +1223,38 @@ body {
   justify-content: space-between;
   align-items: center;
   background: var(--background);
-  padding: 10px 14px;
+  padding: 12px 14px;
   border-radius: 8px;
+  gap: 12px;
+}
+
+.past-item-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
 }
 
 .past-item-title {
   font-size: 14px;
+  font-weight: 600;
   color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.past-item-date {
+  font-size: 12px;
+  color: var(--text-tertiary);
 }
 
 .past-item-dday {
   font-size: 14px;
   font-weight: 600;
   color: var(--text-tertiary);
+  flex-shrink: 0;
 }
 
 .analytics-empty {
@@ -934,42 +1264,9 @@ body {
   padding: 16px;
 }
 
-.analytics-heatmap {
-  margin-bottom: 16px;
-}
-
-.heatmap-grid {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 8px;
-}
-
-.heatmap-cell {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-}
-
-.heatmap-block {
-  width: 100%;
-  aspect-ratio: 1;
-  background: var(--primary-color);
-  border-radius: 6px;
-}
-
-.heatmap-label {
-  font-size: 10px;
-  color: var(--text-secondary);
-}
-
-.heatmap-count {
-  font-size: 10px;
-  color: var(--text-tertiary);
-}
-
+/* Unlock Section */
 .unlock-section {
-  margin-top: 16px;
+  margin-top: 20px;
   text-align: center;
 }
 
@@ -977,10 +1274,10 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 12px 24px;
+  padding: 14px 28px;
   background: var(--primary-color);
   border: none;
-  border-radius: 24px;
+  border-radius: 12px;
   color: white;
   font-size: 15px;
   font-weight: 600;

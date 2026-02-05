@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { format, parseISO, isValid, addDays } from 'date-fns';
+import { format, parseISO, isValid, addDays, addMonths } from 'date-fns';
 import { ko } from 'date-fns/locale';
 
 export interface DdayItem {
@@ -369,6 +369,143 @@ export const useDdayState = () => {
     getPastItems,
     getMilestones,
     calculateStats,
+  };
+};
+
+// ===== Analytics Helper Types & Functions =====
+
+export interface AnalyticsInsight {
+  icon: string;
+  label: string;
+  value: string;
+}
+
+export interface MonthlyDistribution {
+  month: string;
+  monthLabel: string;
+  count: number;
+  isCurrent: boolean;
+}
+
+export interface SavingsAggregation {
+  totalGoal: number;
+  totalSaved: number;
+  totalRemaining: number;
+  averageProgress: number;
+  itemsWithGoals: number;
+}
+
+export const generateInsights = (items: DdayItem[], stats: DdayStats): AnalyticsInsight[] => {
+  const insights: AnalyticsInsight[] = [];
+  if (items.length === 0) return insights;
+
+  // 1. Most popular category
+  const topEntry = Object.entries(stats.categoryBreakdown).sort(([, a], [, b]) => b - a)[0];
+  if (topEntry) {
+    const catName = CATEGORIES.find(c => c.id === topEntry[0])?.name || '기타';
+    insights.push({
+      icon: 'ri-pie-chart-line',
+      label: '가장 많은 카테고리',
+      value: `${catName} (${topEntry[1]}개)`,
+    });
+  }
+
+  // 2. Average days until D-Day
+  const upcoming = items.filter(i => calculateDday(i.targetDate) < 0);
+  if (upcoming.length > 0) {
+    const avg = Math.round(upcoming.reduce((s, i) => s + Math.abs(calculateDday(i.targetDate)), 0) / upcoming.length);
+    insights.push({
+      icon: 'ri-time-line',
+      label: '평균 남은 기간',
+      value: `${avg}일`,
+    });
+  }
+
+  // 3. Longest running (past)
+  if (stats.longestRunning) {
+    const days = calculateDday(stats.longestRunning.targetDate);
+    insights.push({
+      icon: 'ri-medal-line',
+      label: '가장 오래된 D-Day',
+      value: `${stats.longestRunning.title} (D+${days})`,
+    });
+  }
+
+  // 4. This month count
+  const thisMonth = format(new Date(), 'yyyy-MM');
+  const thisMonthCount = items.filter(i => i.targetDate.startsWith(thisMonth)).length;
+  if (thisMonthCount > 0) {
+    insights.push({
+      icon: 'ri-calendar-check-line',
+      label: '이번 달 D-Day',
+      value: `${thisMonthCount}개`,
+    });
+  }
+
+  // 5. Savings average progress
+  const withGoals = items.filter(i => i.goalAmount && i.goalAmount > 0);
+  if (withGoals.length > 0) {
+    const avgProg = Math.round(
+      withGoals.reduce((s, i) => s + ((i.savedAmount || 0) / (i.goalAmount || 1)) * 100, 0) / withGoals.length
+    );
+    insights.push({
+      icon: 'ri-money-won-circle-line',
+      label: '저축 평균 달성률',
+      value: `${avgProg}%`,
+    });
+  }
+
+  // 6. Total tracked days
+  if (items.length >= 2) {
+    const allDays = items.map(i => Math.abs(calculateDday(i.targetDate)));
+    const totalDaysTracked = allDays.reduce((s, d) => s + d, 0);
+    insights.push({
+      icon: 'ri-timer-line',
+      label: '총 추적 일수',
+      value: `${totalDaysTracked.toLocaleString()}일`,
+    });
+  }
+
+  return insights;
+};
+
+export const getMonthlyDistribution = (items: DdayItem[]): MonthlyDistribution[] => {
+  const currentMonth = format(new Date(), 'yyyy-MM');
+  const months: string[] = [];
+  for (let i = -5; i <= 6; i++) {
+    const d = addMonths(new Date(), i);
+    months.push(format(d, 'yyyy-MM'));
+  }
+
+  const counts: Record<string, number> = {};
+  items.forEach(item => {
+    const m = item.targetDate.substring(0, 7);
+    if (months.includes(m)) {
+      counts[m] = (counts[m] || 0) + 1;
+    }
+  });
+
+  return months.map(m => ({
+    month: m,
+    monthLabel: `${parseInt(m.split('-')[1])}월`,
+    count: counts[m] || 0,
+    isCurrent: m === currentMonth,
+  }));
+};
+
+export const aggregateSavings = (items: DdayItem[]): SavingsAggregation | null => {
+  const withGoals = items.filter(i => i.goalAmount && i.goalAmount > 0);
+  if (withGoals.length === 0) return null;
+
+  const totalGoal = withGoals.reduce((s, i) => s + (i.goalAmount || 0), 0);
+  const totalSaved = withGoals.reduce((s, i) => s + (i.savedAmount || 0), 0);
+
+  return {
+    totalGoal,
+    totalSaved,
+    totalRemaining: Math.max(0, totalGoal - totalSaved),
+    averageProgress: totalGoal > 0 ? Math.min(100, Math.round((totalSaved / totalGoal) * 100)) : 0,
+    itemsWithGoals: withGoals.length,
   };
 };
 
