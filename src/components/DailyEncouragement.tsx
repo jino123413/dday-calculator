@@ -3,7 +3,9 @@ import { DdayItem, calculateDday } from '../hooks/useDdayState';
 interface DailyEncouragementProps {
   items: DdayItem[];
   unlocked: boolean;
+  drawCount: number;
   onUnlock: () => void;
+  onRedraw: () => void;
 }
 
 type DdayRange = 'far' | 'mid' | 'near' | 'soon' | 'today' | 'past' | 'none';
@@ -15,11 +17,25 @@ const MESSAGES: Record<DdayRange, string[]> = {
     '먼 미래처럼 느껴져도, 하루하루가 쌓이면 어느새 도착해 있어요.',
     '큰 목표는 작은 습관에서 시작돼요. 오늘의 작은 실천부터.',
     '마라톤의 초반이에요. 페이스 조절하며 꾸준히 가봐요.',
-    '오늘 쉬어도 괜찮아요. 내일 다시 시작하면 되니까.',
     '지금은 씨앗을 심는 시간이에요. 열매는 반드시 맺힙니다.',
     '조급해하지 마세요. 꾸준함이 천재를 이깁니다.',
     '먼 길도 한 걸음부터. 오늘 그 한 걸음을 내디뎠나요?',
     '지금 이 순간에도 목표를 향해 가고 있다는 걸 기억하세요.',
+    '시간은 모두에게 공평하지만, 쓰는 방법은 다릅니다.',
+    '아인슈타인도 처음엔 아무도 몰랐어요. 위대함은 조용히 시작됩니다.',
+    '매일 1%씩 성장하면 1년 뒤엔 37배가 돼요. 복리의 힘이에요.',
+    '지금 이 시간이 "그때 시작하길 잘했다"의 그때예요.',
+    '뭔가 시작했다는 것 자체가 이미 절반은 성공한 거예요.',
+    '당신이 뭘 하든, 시간은 어차피 지나가요. 의미 있게 채워보세요.',
+    '오늘 아무것도 안 하면, 내일의 나는 오늘의 나를 원망해요.',
+    '넷플릭스 한 편 줄이고 30분 투자하면, 100일 뒤 50시간이에요.',
+    '불안하다면 움직이세요. 행동만이 불안을 잠재울 수 있어요.',
+    '목표까지의 거리는 멀지만, 어제보다 하루 더 가까워졌어요.',
+    '재능은 타고나는 것이지만, 실력은 만드는 거예요.',
+    '남들이 쉬는 시간에 한 발짝 더 나가면, 그게 격차가 됩니다.',
+    '"언젠가"라는 말은 "영원히 안 할 거야"의 다른 표현이에요.',
+    '루틴을 만들면 의지력이 필요 없어져요. 시스템을 믿으세요.',
+    '지금 심는 씨앗이 어떤 나무가 될지, 아직 아무도 몰라요.',
   ],
   mid: [
     '한 달 안쪽으로 들어왔어요. 이제부터가 진짜입니다.',
@@ -32,6 +48,20 @@ const MESSAGES: Record<DdayRange, string[]> = {
     '속도가 느려도 괜찮아요. 방향이 맞으면 결국 도착해요.',
     '지금 힘든 만큼, 끝나고 나면 그만큼 뿌듯할 거예요.',
     '작은 성취를 쌓아가는 중이에요. 스스로를 칭찬해주세요.',
+    '당신은 지금 미래의 자신에게 선물을 만들고 있는 거예요.',
+    '포기하고 싶은 순간이 가장 성장하는 순간이래요.',
+    '남은 날이 줄어드는 게 무섭다면, 그만큼 진심이라는 뜻이에요.',
+    '지금 흘리는 땀이 나중에 가장 달콤한 추억이 됩니다.',
+    '어제의 나보다 오늘의 내가 조금이라도 나아졌다면 성공이에요.',
+    '마감 효과라고 들어보셨나요? 기한이 가까울수록 능률이 올라가요.',
+    '"아 그때 좀 더 할걸" 후회하지 않으려면, 바로 지금이에요.',
+    '컨디션이 안 좋아도 10분만 해보세요. 그 10분이 기적을 만들어요.',
+    '계획이 완벽할 필요 없어요. 60점짜리 계획이라도 실행이 중요해요.',
+    '중간에 흔들리는 건 당연해요. 중요한 건 다시 돌아오는 힘이에요.',
+    '오늘은 어제의 내일이에요. 미루던 걸 지금 시작해보세요.',
+    '피카소도 "영감은 찾아오는 것이다. 단, 일하는 중에만"이라 했어요.',
+    '노력의 결과가 보이기 시작하는 시점이에요. 조금만 더 가보세요.',
+    '지치면 잠깐 쉬어가세요. 재충전도 전략의 일부입니다.',
   ],
   near: [
     '카운트다운이 시작됐어요. 하루하루가 소중합니다.',
@@ -44,6 +74,20 @@ const MESSAGES: Record<DdayRange, string[]> = {
     '지금 하고 있는 것들, 다 의미 있는 일이에요.',
     '눈앞에 보여요. 조금만 더 손을 뻗으면 닿아요.',
     '이 시간이 지나면, 해냈다는 기쁨만 남을 거예요.',
+    '지금이 가장 집중하기 좋은 시간이에요. 딴 생각은 나중에!',
+    '당신의 노력에는 유통기한이 없어요. 반드시 빛을 봅니다.',
+    '긴장감을 에너지로 바꾸세요. 그게 당신의 무기입니다.',
+    '완벽하지 않아도 돼요. 끝까지 가는 게 더 중요해요.',
+    '이 며칠이 앞으로의 몇 년을 바꿀 수 있어요.',
+    '지금 포기하면 그동안의 시간이 아까워요. 끝까지 가봐요.',
+    '두려움은 문 앞에서만 크게 느껴져요. 문을 열면 별거 없어요.',
+    '막판 뒤집기의 주인공이 되어보세요. 아직 늦지 않았어요.',
+    '숨 한번 크게 쉬고, 다시 집중해보세요. 할 수 있어요.',
+    '이 순간을 나중에 떠올리면 "그때 버텨서 다행이다" 할 거예요.',
+    '오늘 하루를 후회 없이 보내면, 내일은 더 자신 있어져요.',
+    '결승선이 보이기 시작했어요. 마지막까지 페이스를 유지하세요.',
+    '할 수 있는 만큼만 하세요. 그것만으로도 충분히 대단해요.',
+    '최고의 결과는 최선의 준비에서 나옵니다. 지금 그 중이에요.',
   ],
   soon: [
     '심호흡하고, 지금까지의 노력을 믿으세요.',
@@ -54,6 +98,18 @@ const MESSAGES: Record<DdayRange, string[]> = {
     '이 순간이 지나면 해냈다는 뿌듯함만 남아요.',
     '지금 느끼는 설렘, 그게 바로 살아있다는 증거예요.',
     '오늘은 쉬면서 마음의 준비를 해보는 건 어때요?',
+    '버락 오바마도 연설 전 긴장했대요. 긴장은 자연스러운 거예요.',
+    '당신이 여기까지 온 것 자체가 이미 승리예요.',
+    '이제 마지막 퍼즐 조각만 남았어요.',
+    '내가 할 수 있는 최선을 다했다면, 그것으로 충분해요.',
+    '걱정의 90%는 실제로 일어나지 않는대요. 좋은 일만 상상하세요.',
+    '잠은 충분히 자세요. 지친 몸으로는 좋은 결과를 낼 수 없어요.',
+    '긴장된다면 가볍게 스트레칭해보세요. 몸이 풀리면 마음도 풀려요.',
+    '이 떨림이 지나면 "해냈다!"는 쾌감이 기다리고 있어요.',
+    '"되면 좋고 안 되면 경험"이라는 마인드로 가볍게 가세요.',
+    '지금까지 버텨온 당신이라면 뭐든 해낼 수 있어요.',
+    '코앞에 다가온 이 순간, 의외로 가장 아름다운 시간이에요.',
+    '과거의 당신이 이 날을 위해 달려왔어요. 보답할 시간입니다.',
   ],
   today: [
     '드디어 오늘이에요! 그동안 고생 많았어요.',
@@ -62,6 +118,16 @@ const MESSAGES: Record<DdayRange, string[]> = {
     '기다리던 그날이 왔어요! 후회 없이 즐기세요.',
     '모든 준비는 끝났어요. 이제 결과를 만들 시간입니다.',
     '오늘을 위해 달려왔잖아요. 최고의 하루 보내세요!',
+    '이 순간을 기억하세요. 이게 바로 살아있는 느낌이에요.',
+    '과거의 노력이 오늘의 자신감이 됐어요.',
+    '긴장은 내려놓고, 지금까지의 나를 믿으세요.',
+    '축하해요! 오늘이 오기까지 정말 대단했어요.',
+    '오늘의 당신에게 어울리는 단어: 빛나는.',
+    '드디어! 이 날만 기다렸죠? 마음껏 누리세요.',
+    '모든 카운트다운의 끝에는 새로운 시작이 있어요.',
+    '오늘은 축하의 날이에요. 어떤 결과든 당신은 잘했어요.',
+    '이 날을 위해 쌓아온 시간들이 빛을 발할 거예요.',
+    '결과에 상관없이, 여기까지 온 당신은 이미 대단해요.',
   ],
   past: [
     '지나간 시간도 소중한 경험이에요. 다음 목표를 세워볼까요?',
@@ -72,12 +138,32 @@ const MESSAGES: Record<DdayRange, string[]> = {
     '경험이 쌓일수록 단단해져요. 다음엔 더 잘할 수 있어요.',
     '오늘의 추억이 내일의 원동력이 됩니다.',
     '한 챕터를 마무리했어요. 다음 이야기가 기다리고 있어요.',
+    '지나간 건 지나간 대로 의미가 있어요. 앞만 보세요.',
+    '과거를 되돌아보는 건 배우기 위해서지, 후회하기 위해서가 아니에요.',
+    '그 경험이 없었다면 지금의 당신도 없어요.',
+    '이미 결승선을 통과했어요. 이제 다음 레이스를 준비해볼까요?',
+    '어떤 결과였든, 용기를 냈다는 것 자체가 대단해요.',
+    '지나간 D-Day는 추억이 되고, 추억은 힘이 됩니다.',
+    '뒤돌아보지 마세요. 당신의 최고 기록은 항상 다음에 나와요.',
+    '"이것도 지나가리라." 그리고 지나갔죠? 당신은 이겨냈어요.',
+    '끝난 뒤에 느끼는 허무함도 자연스러운 감정이에요. 곧 괜찮아져요.',
+    '한 번 해냈으면 또 할 수 있어요. 경험은 최고의 자산이에요.',
+    '오늘은 회고하기 좋은 날이에요. 잘한 점 3가지를 적어보세요.',
+    '다음 목표는 뭔가요? 새로운 카운트다운을 시작해보세요.',
   ],
   none: [
     '소중한 날을 기록하면 하루가 더 특별해져요.',
     '기대되는 날짜가 있으면 하루하루가 설레요.',
     '새로운 목표를 세워보세요. 매일이 달라질 거예요.',
     '특별한 날을 추가하고, 함께 카운트다운 해봐요.',
+    '여행, 시험, 생일, 기념일… 기다리는 날이 있나요?',
+    '목표 날짜를 정하면, 오늘부터 행동이 달라져요.',
+    '아무것도 기록하지 않은 날은 없는 날과 같아요.',
+    '하루모아와 함께 D-Day를 만들어봐요. 하루가 달라질 거예요.',
+    '카운트다운이 있으면 일상에 작은 설렘이 생겨요.',
+    '목표 없이 사는 것도 괜찮지만, 있으면 더 재밌어요.',
+    '첫 D-Day를 등록하는 순간, 시간의 의미가 달라져요.',
+    '누구나 기다리는 날이 있잖아요. 그 날을 기록해보세요.',
   ],
 };
 
@@ -99,10 +185,10 @@ function getDayOfYear(): number {
   return Math.floor(diff / (1000 * 60 * 60 * 24));
 }
 
-function pickMessage(range: DdayRange): string {
+function pickMessage(range: DdayRange, drawCount: number): string {
   const messages = MESSAGES[range];
-  const dayIndex = getDayOfYear();
-  return messages[dayIndex % messages.length];
+  const seed = getDayOfYear() + drawCount;
+  return messages[seed % messages.length];
 }
 
 const RANGE_LABELS: Record<DdayRange, string> = {
@@ -115,8 +201,7 @@ const RANGE_LABELS: Record<DdayRange, string> = {
   none: '새로운 시작을 위해,',
 };
 
-export function DailyEncouragement({ items, unlocked, onUnlock }: DailyEncouragementProps) {
-  // Find the most relevant D-Day
+export function DailyEncouragement({ items, unlocked, drawCount, onUnlock, onRedraw }: DailyEncouragementProps) {
   const candidates = items
     .map(item => ({ item, dday: calculateDday(item.targetDate) }))
     .sort((a, b) => Math.abs(a.dday) - Math.abs(b.dday));
@@ -126,7 +211,7 @@ export function DailyEncouragement({ items, unlocked, onUnlock }: DailyEncourage
 
   const dday = target?.dday ?? null;
   const range = getDdayRange(dday);
-  const message = pickMessage(range);
+  const message = pickMessage(range, drawCount);
   const rangeLabel = RANGE_LABELS[range];
 
   return (
@@ -143,9 +228,17 @@ export function DailyEncouragement({ items, unlocked, onUnlock }: DailyEncourage
       )}
 
       {unlocked ? (
-        <div className="encouragement-revealed">
-          <p className="encouragement-message">{message}</p>
-        </div>
+        <>
+          <div className="encouragement-revealed">
+            <p className="encouragement-message">{message}</p>
+          </div>
+          <button className="encouragement-redraw-btn" onClick={onRedraw}>
+            <i className="ri-refresh-line"></i>
+            새로운 응원 뽑기
+            <span className="ad-badge">AD</span>
+          </button>
+          <p className="ad-notice">광고 시청 후 새로운 응원 메시지를 받을 수 있어요</p>
+        </>
       ) : (
         <>
           <div className="encouragement-blurred">

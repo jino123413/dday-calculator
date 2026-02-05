@@ -88,6 +88,7 @@ function App() {
   // Unlock state (daily reset via localStorage)
   const [analyticsUnlocked, setAnalyticsUnlocked] = useState(() => isUnlockedToday(UNLOCK_KEYS.analytics));
   const [encouragementUnlocked, setEncouragementUnlocked] = useState(() => isUnlockedToday(UNLOCK_KEYS.encouragement));
+  const [encouragementDrawCount, setEncouragementDrawCount] = useState(0);
 
   const sortedItems = getSortedItems();
   const stats = calculateStats();
@@ -239,6 +240,18 @@ function App() {
     });
   }, [showInterstitialAd, showToast]);
 
+  const handleRedrawEncouragement = useCallback(() => {
+    showInterstitialAd({
+      onDismiss: () => {
+        setEncouragementDrawCount(prev => prev + 1);
+        showToast('새로운 응원 메시지가 도착했어요!');
+      },
+      onUnavailable: () => {
+        showToast('광고를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.');
+      },
+    });
+  }, [showInterstitialAd, showToast]);
+
   // Preview D-Day
   const previewDday = useMemo(() => {
     try {
@@ -314,7 +327,9 @@ function App() {
           <DailyEncouragement
             items={items}
             unlocked={encouragementUnlocked}
+            drawCount={encouragementDrawCount}
             onUnlock={handleUnlockEncouragement}
+            onRedraw={handleRedrawEncouragement}
           />
 
           {/* Anniversary Suggestions */}

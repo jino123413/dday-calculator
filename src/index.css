@@ -1079,6 +1079,30 @@ body {
   transform: scale(0.98);
 }
 
+.encouragement-redraw-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px;
+  margin-top: 12px;
+  background: var(--surface);
+  border: 1.5px solid var(--primary-color);
+  border-radius: 12px;
+  color: var(--primary-color);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+
+.encouragement-redraw-btn:active {
+  transform: scale(0.98);
+  background: var(--primary-light);
+}
+
 /* Detail Modal */
 .detail-modal {
   background: var(--surface);
