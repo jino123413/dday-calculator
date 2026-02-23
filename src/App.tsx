@@ -19,6 +19,9 @@ import { AnniversarySuggestions } from './components/AnniversarySuggestions';
 import { DdayAnalytics } from './components/DdayAnalytics';
 import { DailyEncouragement } from './components/DailyEncouragement';
 import { DdayDetailModal } from './components/DdayDetailModal';
+import BannerAd from './components/BannerAd';
+
+const BANNER_AD_ID = 'ait.v2.live.68332a74fb114524';
 
 type Tab = 'list' | 'add' | 'between' | 'calendar' | 'analytics';
 
@@ -392,6 +395,11 @@ function App() {
                 <p className="hint-text">카드를 탭하면 상세 정보를 볼 수 있습니다</p>
               </>
             )}
+          </div>
+
+          {/* Banner Ad - below D-day list */}
+          <div style={{ padding: '12px 0' }}>
+            <BannerAd adGroupId={BANNER_AD_ID} />
           </div>
         </>
       )}
